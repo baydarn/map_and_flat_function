@@ -1,0 +1,92 @@
+/*--------------------map() and flatMap() kullanımı------------*/
+
+///ES2019(ES10) ile gelmiş bir özellik
+let arr1 = [1, 2, 3, 4];
+
+arr1.map(x => [x * 2]); 
+// [[2], [4], [6], [8]]
+
+arr1.flatMap(x => [x * 2]);
+// [2, 4, 6, 8]
+
+// only one level is flattened
+arr1.flatMap(x => [[x * 2]]);
+// [[2], [4], [6], [8]]
+
+['Hello', 'World'].flatMap(word => word.split(''));
+// ['H', 'e', 'l', 'l', 'o', 'W', 'o', 'r', 'l', 'd']
+
+///////////////*ALTERNATIVE   *////////////////(AYNI MANTIKTA ÇALIŞIYOR)
+var arr1 = [1, 2, 3, 4];
+
+arr1.flatMap(x => [x * 2]);
+// is equivalent to
+arr1.reduce((acc, x) => acc.concat([x * 2]), []);
+// [2, 4, 6, 8]
+
+//Büyük boyutta arrayler için bu etkisiz kalıyor.O yüzden bu alternatiften kaçınılmalı.Yetersiz kalıyor.Her bir iterationda yeni bir geçici array yaratıyor ki bunun garbage collector(memory management) yapıda olması gerek.Var olan arraye yeni elemanlar eklemek yerine yeni arrayin üstüne güncel akümülatör arrayden elemanları kopyalar yeni arrayin üstüne.
+
+
+//SYNTAX
+//var A = array.flatMap(function callback(current_value, index, Array))
+{
+    // It returns the new array's elements.
+}
+
+
+
+ÖRNEK:One situation I have found flatMap() to be useful is when dealing with time series data. For example, imagine you get the following JSON from an API:
+
+[
+  {
+    "timestamp": "2019-01-15",
+    "purchases": [
+      {"product": "Product 1", "total": 20, "time": "09:00"},
+      {"product": "Product 1", "total": 60, "time": "12:00"}
+    ]
+  },
+  {
+    "timestamp": "2019-01-16",
+    "purchases": [
+      {"product": "Product 1", "total": 40, "time": "10:00"},
+      {"product": "Product 2", "total": 30, "time": "11:00"}
+    ]
+  },
+  {
+    "timestamp": "2019-01-17",
+    "purchases": [
+      {"product": "Product 1", "total": 10, "time": "14:00"},
+      {"product": "Product 2", "total": 20, "time": "17:00"}
+    ]
+  }
+]
+
+If I wanted to plot this data on a chart, I might need to collect the total for each respective product into a single array, depending on the charting library. I could do that with flatMap()!
+
+let product1Sales = json.flatMap(({ purchases }) => {
+  return purchases
+    .filter(sale => sale.product === 'Product 1')
+    .map(sale => sale.total);
+});
+
+// [20, 60, 40, 10]
+
+
+
+flatMap() methodu sanki önce map() sonra da flat(1)'i çağırmışız gibi bir özellik.
+ÖRNEK:
+['Hello', 'World'].map(word => word.split(''));
+// [['H', 'e', 'l', 'l', 'o'], ['W', 'o', 'r', 'l', 'd']]
+
+Önce map'i kullandık daha sonra flat(1)'i kullanalım.
+
+[['H', 'e', 'l', 'l', 'o'], ['W', 'o', 'r', 'l', 'd']].flat(1);
+// ['H', 'e', 'l', 'l', 'o', 'W', 'o', 'r', 'l', 'd']
+
+
+Özellik:flatMap ile ilgili başka acayip bir gelişme ise tek bir adımda filter() ve map () yapabiliriz.flatMap callback'inden boş bir array döndürerek elemanları filtreleyebiliriz.
+Örnek:// [ 1, 3, 5, 7, 9 ]
+const oddNumbers = allNumbers.flatMap(num => num % 2 === 0 ? [] : num);
+
+
+
